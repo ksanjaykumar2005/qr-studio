@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>QR Studio | Premium Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c1c);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 420px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+            text-align: center;
+            color: white;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: 0.3s ease;
+        }
+
+        .generate-btn {
+            background: #00f2fe;
+            color: black;
+        }
+
+        .generate-btn:hover {
+            background: #4facfe;
+            transform: translateY(-3px);
+        }
+
+        .download-btn {
+            background: #ff512f;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background: #dd2476;
+            transform: translateY(-3px);
+        }
+
+        img {
+            margin-top: 25px;
+            border-radius: 15px;
+            background: white;
+            padding: 10px;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        @media(max-width: 480px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>QR Studio ✨</h1>
+
+    <form method="post" action="/generate">
+        <input type="text" name="text" placeholder="Enter URL or Text..." required />
+        <button type="submit" class="btn generate-btn">Generate QR</button>
+    </form>
+
+    <div th:if="${qrImage}">
+        <img th:src="'data:image/png;base64,' + ${qrImage}" width="250" />
+
+        <a th:href="'data:image/png;base64,' + ${downloadImage}"
+           download="qr-code.png">
+            <button class="btn download-btn">Download QR Code</button>
+        </a>
+    </div>
+   <!-- <div th:if="${history}" style="margin-top:30px; text-align:left;">
+        <h3 style="margin-bottom:10px; font-size:16px;">Recent History</h3>
+
+        <div style="max-height:200px; overflow-y:auto;">
+            <div th:each="item : ${history}"
+                 style="display:flex; align-items:center; gap:10px; margin-bottom:10px; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; cursor:pointer;"
+                 th:onclick="'window.location.href=\'/view/' + ${item.id} + '\''">
+
+                <img th:src="'data:image/png;base64,' + ${item.qrImage}" width="50"/>
+
+                <div style="font-size:12px;">
+                    <div th:text="${item.text}" style="word-break:break-all;"></div>
+                    <div style="opacity:0.6; font-size:10px;"
+                         th:text="${item.createdAt}"></div>
+                </div>
+            </div>
+        </div>
+    </div>-->
+
+    <footer>
+        Built with Spring Boot & ZXing 🚀
+    </footer>
+</div>
+
+</body>
+</html>
+<!--
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>QR Studio | Premium Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #0f2027, #203a43, #2c5364, #1c1c1c);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            overflow: hidden;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Floating Glow */
+        .bg-glow {
+            position: fixed;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0,242,254,0.25), transparent 70%);
+            top: -100px;
+            left: -100px;
+            animation: floatGlow 12s infinite alternate ease-in-out;
+            z-index: -1;
+        }
+
+        @keyframes floatGlow {
+            from { transform: translate(0,0); }
+            to { transform: translate(200px,200px); }
+        }
+
+        .container {
+            width: 420px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            backdrop-filter: blur(25px);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+            text-align: center;
+            color: white;
+            animation: slideUp 1s ease-out;
+            transition: transform 0.4s ease;
+        }
+
+        .container:hover {
+            transform: rotateX(3deg) rotateY(3deg) scale(1.02);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            outline: none;
+            margin-bottom: 20px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            box-shadow: 0 0 10px #00f2fe;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+            transition: 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::after {
+            content: "";
+            position: absolute;
+            width: 300%;
+            height: 300%;
+            top: 50%;
+            left: 50%;
+            pointer-events: none;
+            background: rgba(255,255,255,0.3);
+            transform: translate(-50%, -50%) scale(0);
+            border-radius: 50%;
+            transition: transform 0.6s ease-out;
+        }
+
+        .btn:active::after {
+            transform: translate(-50%, -50%) scale(1);
+            transition: 0s;
+        }
+
+        .generate-btn {
+            background: #00f2fe;
+            color: black;
+        }
+
+        .generate-btn:hover {
+            background: #4facfe;
+            transform: translateY(-3px);
+        }
+
+        .download-btn {
+            background: #ff512f;
+            margin-top: 15px;
+        }
+
+        .download-btn:hover {
+            background: #dd2476;
+            transform: translateY(-3px);
+        }
+
+        img {
+            margin-top: 25px;
+            border-radius: 15px;
+            background: white;
+            padding: 10px;
+            animation: qrReveal 0.6s ease-out;
+        }
+
+        @keyframes qrReveal {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .history {
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .history h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .history-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            background: rgba(255,255,255,0.05);
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .history-item:hover {
+            background: rgba(0,242,254,0.2);
+            transform: scale(1.02);
+        }
+
+        .history-item img {
+            width: 50px;
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        @media(max-width: 480px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="container">
+    <h1>QR Studio ✨</h1>
+
+    <form method="post" action="/generate">
+        <input type="text" name="text" placeholder="Enter URL or Text..." required />
+        <button type="submit" class="btn generate-btn">Generate QR</button>
+    </form>
+
+    <div th:if="${qrImage}">
+        <img th:src="'data:image/png;base64,' + ${qrImage}" width="250" />
+
+        <a th:href="'data:image/png;base64,' + ${downloadImage}"
+           download="qr-code.png">
+            <button class="btn download-btn">Download QR Code</button>
+        </a>
+    </div>
+
+    <div th:if="${history}" class="history">
+        <h3>Recent History</h3>
+
+        <div class="history-list">
+            <div th:each="item : ${history}"
+                 class="history-item"
+                 th:onclick="'window.location.href=\'/view/' + ${item.id} + '\''">
+
+                <img th:src="'data:image/png;base64,' + ${item.qrImage}"/>
+
+                <div style="font-size:12px;">
+                    <div th:text="${item.text}" style="word-break:break-all;"></div>
+                    <div style="opacity:0.6; font-size:10px;"
+                         th:text="${item.createdAt}"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Built with Spring Boot & ZXing 🚀
+    </footer>
+</div>
+
+</body>
+</html>-->
